@@ -9,14 +9,6 @@ import jsoftviewer.models.LayoutSet;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 import java.io.File;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.JOptionPane;
 import jsoftviewer.models.Layout;
 
 /**
@@ -26,17 +18,12 @@ import jsoftviewer.models.Layout;
 public class LayoutReader {
 
     private File layoutFile;
-    public final String FILE_PATH = "/layout.xml";
+    public final String FILE_PATH = "layout.xml";
 
     public LayoutReader() {
         //this.layoutFile = new File(FILE_PATH);
 
-        try {
-            layoutFile = new File(getClass().getResource("layout.xml").toURI());
-
-        } catch (Exception ex) {
-            JOptionPane.showMessageDialog(null, ex, "JSoftViewer", JOptionPane.INFORMATION_MESSAGE);
-        }
+        layoutFile = new File(FILE_PATH);
     }
 
     private LayoutSet loadConfig() {

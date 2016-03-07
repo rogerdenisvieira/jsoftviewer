@@ -6,6 +6,9 @@
 package jsoftviewer.gui;
 
 import java.io.FileNotFoundException;
+import java.text.ParseException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -21,6 +24,7 @@ import jsoftviewer.TableFiller;
  * @author roger
  */
 public class Main extends javax.swing.JFrame {
+
     private LayoutReader reader;
 
     /**
@@ -49,10 +53,12 @@ public class Main extends javax.swing.JFrame {
         menuItemOpen = new javax.swing.JMenuItem();
         menuItemExit = new javax.swing.JMenuItem();
         menuEdit = new javax.swing.JMenu();
+        editItemSettings = new javax.swing.JMenuItem();
         menuHelp = new javax.swing.JMenu();
         menuItemAbout = new javax.swing.JMenuItem();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("JSoftViewer - BETA");
         setMinimumSize(new java.awt.Dimension(640, 480));
         setPreferredSize(new java.awt.Dimension(640, 480));
 
@@ -89,6 +95,7 @@ public class Main extends javax.swing.JFrame {
 
         menuFile.setText("File");
 
+        menuItemOpen.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
         menuItemOpen.setText("Open");
         menuItemOpen.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -97,6 +104,7 @@ public class Main extends javax.swing.JFrame {
         });
         menuFile.add(menuItemOpen);
 
+        menuItemExit.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_E, java.awt.event.InputEvent.CTRL_MASK));
         menuItemExit.setText("Exit");
         menuItemExit.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -108,11 +116,26 @@ public class Main extends javax.swing.JFrame {
         menuBar.add(menuFile);
 
         menuEdit.setText("Edit");
+
+        editItemSettings.setText("Settings");
+        editItemSettings.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                editItemSettingsActionPerformed(evt);
+            }
+        });
+        menuEdit.add(editItemSettings);
+
         menuBar.add(menuEdit);
 
         menuHelp.setText("Help");
 
+        menuItemAbout.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F1, 0));
         menuItemAbout.setText("About");
+        menuItemAbout.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuItemAboutActionPerformed(evt);
+            }
+        });
         menuHelp.add(menuItemAbout);
 
         menuBar.add(menuHelp);
@@ -152,15 +175,15 @@ public class Main extends javax.swing.JFrame {
     private void menuItemOpenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemOpenActionPerformed
         // TODO add your handling code here:
         JFileChooser jfc = new JFileChooser("C:\\");
-        FileNameExtensionFilter filter = new FileNameExtensionFilter("Output files", "txt","fop");
-        
+        FileNameExtensionFilter filter = new FileNameExtensionFilter("Output files", "txt", "fop");
+
         jfc.setFileFilter(filter);
         int returnValue = jfc.showOpenDialog(this);
 
         if (returnValue == JFileChooser.APPROVE_OPTION) {
             try {
                 FileProcessor fp = new FileProcessor(jfc.getSelectedFile());
-                
+
                 tableFileLines.setModel(TableFiller.fill(fp.process(), new String[]{"File line"}));
                 tableFileLines.repaint();
 
@@ -174,25 +197,40 @@ public class Main extends javax.swing.JFrame {
 
     private void tableFileLinesMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tableFileLinesMouseClicked
         // TODO add your handling code here:
-        
+
         System.out.println(tableFileLines.getSelectedRow());
         String lineValue = (String) tableFileLines.getModel().getValueAt(tableFileLines.getSelectedRow(), 0);
-        DefaultTableModel model = TableFiller.fillWithModule(lineValue, reader);
-        
-        if (model != null) {
-            tableInformations.setModel(model);
-            tableInformations.repaint();
-        } else {
-             JOptionPane.showMessageDialog(null, "There aren't any registered layout for this selection.", "JSoftViewer", JOptionPane.INFORMATION_MESSAGE);
-        }
-        
+        DefaultTableModel model;
+        try {
+            model = TableFiller.fillWithModule(lineValue, reader);
+            if (model != null) {
+                tableInformations.setModel(model);
+                tableInformations.repaint();
+            } else {
+                JOptionPane.showMessageDialog(null, "There aren't any registered layout for this selection.", "JSoftViewer", JOptionPane.INFORMATION_MESSAGE);
+            }
 
-        
+        } catch (ParseException ex) {
+            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+
     }//GEN-LAST:event_tableFileLinesMouseClicked
 
     private void menuItemExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemExitActionPerformed
         // TODO add your handling code here:
+        System.exit(0);
     }//GEN-LAST:event_menuItemExitActionPerformed
+
+    private void menuItemAboutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemAboutActionPerformed
+        // TODO add your handling code here:
+        About about = new About();
+        about.setVisible(true);
+    }//GEN-LAST:event_menuItemAboutActionPerformed
+
+    private void editItemSettingsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editItemSettingsActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_editItemSettingsActionPerformed
 
     /**
      * @param args the command line arguments
@@ -230,6 +268,7 @@ public class Main extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JMenuItem editItemSettings;
     private javax.swing.JMenuBar menuBar;
     private javax.swing.JMenu menuEdit;
     private javax.swing.JMenu menuFile;
