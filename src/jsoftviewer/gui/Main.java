@@ -211,6 +211,7 @@ public class Main extends javax.swing.JFrame {
             }
 
         } catch (ParseException ex) {
+            ex.printStackTrace();
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
         }
 

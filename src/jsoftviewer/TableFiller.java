@@ -42,7 +42,7 @@ public class TableFiller {
             for (Attribute a : foundLayout.getAttributes()) {
 
                 attributeValue = lineValue.substring(a.getBegin() - 1, a.getEnd());
-
+                
                 if (a.getDescription().contains("Data")) {
                     SimpleDateFormat dateForm = new SimpleDateFormat("yyyyMMdd");
                     Date date = dateForm.parse(attributeValue);
@@ -50,6 +50,8 @@ public class TableFiller {
                     attributeValue = dateForm.format(date);
 
                 }
+
+                System.out.println("Atributo: " + a.getDescription());
 
                 model.addRow(new Object[]{a.getDescription(), attributeValue});
             }

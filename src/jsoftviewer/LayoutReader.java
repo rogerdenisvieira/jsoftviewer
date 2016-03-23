@@ -9,6 +9,7 @@ import jsoftviewer.models.LayoutSet;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 import java.io.File;
+import jsoftviewer.models.Attribute;
 import jsoftviewer.models.Layout;
 
 /**
@@ -26,6 +27,7 @@ public class LayoutReader {
         layoutFile = new File(FILE_PATH);
     }
 
+    // carrega o arquivo completo de layout
     private LayoutSet loadConfig() {
 
         LayoutSet layouts = new LayoutSet();
@@ -36,6 +38,9 @@ public class LayoutReader {
             stream.processAnnotations(LayoutSet.class);
 
             layouts = (LayoutSet) stream.fromXML(layoutFile);
+            
+                        
+            
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -44,6 +49,7 @@ public class LayoutReader {
         return layouts;
     }
 
+    // busca o layout específico pelo nome do módulo
     public Layout findLayout(String moduleName) {
         Layout foundLayout = null;
 
@@ -52,6 +58,7 @@ public class LayoutReader {
                 foundLayout = l;
             }
         }
+             
         return foundLayout;
     }
 

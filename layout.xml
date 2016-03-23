@@ -246,7 +246,7 @@
 		<attribute description="Nr. do acordo (Chave de controle)" length="15" begin="44" end="58"/>
 		<attribute description="Login do operador responsável" length="20" begin="59" end="78"/>
 		<attribute description="Filler" length="421" begin="79" end="499"/>
-		<attribute escription="Final de linha (#)" length="1" begin="500" end="500"/>
+		<attribute description="Final de linha (#)" length="1" begin="500" end="500"/>
 	</layout>
 
 	<layout module="EMFP040020">
