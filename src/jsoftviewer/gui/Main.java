@@ -26,6 +26,7 @@ import jsoftviewer.TableFiller;
 public class Main extends javax.swing.JFrame {
 
     private LayoutReader reader;
+    private String fileExtension;
 
     /**
      * Creates new form Main
@@ -175,7 +176,7 @@ public class Main extends javax.swing.JFrame {
     private void menuItemOpenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemOpenActionPerformed
         // TODO add your handling code here:
         JFileChooser jfc = new JFileChooser("C:\\");
-        FileNameExtensionFilter filter = new FileNameExtensionFilter("Output files", "txt", "fop");
+        FileNameExtensionFilter filter = new FileNameExtensionFilter("Output files", "txt", "fop", "rem");
 
         jfc.setFileFilter(filter);
         int returnValue = jfc.showOpenDialog(this);
@@ -184,6 +185,11 @@ public class Main extends javax.swing.JFrame {
             try {
                 FileProcessor fp = new FileProcessor(jfc.getSelectedFile());
 
+                //armazena a extensão do arquivo
+                String fileName = jfc.getSelectedFile().getName();
+                this.fileExtension = fileName.substring(fileName.lastIndexOf("."), fileName.length());
+
+                //determina o modelo da tabela
                 tableFileLines.setModel(TableFiller.fill(fp.process(), new String[]{"File line"}));
                 tableFileLines.repaint();
 
@@ -201,8 +207,15 @@ public class Main extends javax.swing.JFrame {
         System.out.println(tableFileLines.getSelectedRow());
         String lineValue = (String) tableFileLines.getModel().getValueAt(tableFileLines.getSelectedRow(), 0);
         DefaultTableModel model;
+
         try {
-            model = TableFiller.fillWithModule(lineValue, reader);
+
+            //busca a posição do nome do módulo
+            int[] modNamePosition = getModNamePosition(fileExtension);
+            
+            System.out.println(modNamePosition[0] + " " + modNamePosition[1]);
+
+            model = TableFiller.fillWithModule(lineValue, reader, modNamePosition[0], modNamePosition[1]);
             if (model != null) {
                 tableInformations.setModel(model);
                 tableInformations.repaint();
@@ -217,6 +230,35 @@ public class Main extends javax.swing.JFrame {
 
 
     }//GEN-LAST:event_tableFileLinesMouseClicked
+
+    /* retorna o início e o fim do nome do módulo conforme a extensão do arquivo*/
+    private int[] getModNamePosition(String fileExtension) {
+        int beginEnd[] = new int[2];
+
+        System.out.println(fileExtension);
+        
+        if (this.fileExtension != null) {
+            switch (fileExtension.toLowerCase()) {
+                // arquivo geral
+                case ".fop":
+                    beginEnd[0] = 0;
+                    beginEnd[1] = 10;
+                    break;
+                // arquivo remessa
+                case ".rem":
+                    beginEnd[0] = 41;
+                    beginEnd[1] = 43;
+                    break;
+
+                default:
+                    beginEnd[0] = 0;
+                    beginEnd[1] = 10;
+                    break;
+            }
+        }
+
+        return beginEnd;
+    }
 
     private void menuItemExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemExitActionPerformed
         // TODO add your handling code here:
