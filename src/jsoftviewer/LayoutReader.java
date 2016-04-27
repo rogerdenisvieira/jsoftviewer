@@ -52,7 +52,6 @@ public class LayoutReader {
     // busca o layout específico pelo nome do módulo
     public Layout findLayout(String moduleName) {
         Layout foundLayout = null;
-
         for (Layout l : loadConfig().getLayouts()) {
             if (l.getModule().equals(moduleName)) {
                 foundLayout = l;
