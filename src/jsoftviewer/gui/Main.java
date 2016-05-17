@@ -12,11 +12,13 @@ import java.util.logging.Logger;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.SpinnerNumberModel;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 
 import jsoftviewer.FileProcessor;
 import jsoftviewer.LayoutReader;
+import jsoftviewer.ModuleNamePosition;
 import jsoftviewer.TableFiller;
 
 /**
@@ -49,6 +51,9 @@ public class Main extends javax.swing.JFrame {
         tableFileLines = new javax.swing.JTable();
         scrollPanelTableInformations = new javax.swing.JScrollPane();
         tableInformations = new javax.swing.JTable();
+        jButton1 = new javax.swing.JButton();
+        jButton2 = new javax.swing.JButton();
+        spinnerLineNumber = new javax.swing.JSpinner();
         menuBar = new javax.swing.JMenuBar();
         menuFile = new javax.swing.JMenu();
         menuItemOpen = new javax.swing.JMenuItem();
@@ -61,7 +66,6 @@ public class Main extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("JSoftViewer - BETA");
         setMinimumSize(new java.awt.Dimension(640, 480));
-        setPreferredSize(new java.awt.Dimension(640, 480));
 
         tableFileLines.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -93,6 +97,14 @@ public class Main extends javax.swing.JFrame {
             }
         ));
         scrollPanelTableInformations.setViewportView(tableInformations);
+
+        jButton1.setText(">>");
+
+        jButton2.setText("<<");
+
+        spinnerLineNumber.setModel(new javax.swing.SpinnerNumberModel(0, 0, null, 1));
+        spinnerLineNumber.setMinimumSize(new java.awt.Dimension(35, 26));
+        spinnerLineNumber.setName(""); // NOI18N
 
         menuFile.setText("File");
 
@@ -149,7 +161,15 @@ public class Main extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(scrollPanelFileLines, javax.swing.GroupLayout.DEFAULT_SIZE, 437, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(scrollPanelFileLines, javax.swing.GroupLayout.DEFAULT_SIZE, 437, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(jButton2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(spinnerLineNumber, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton1)))
                 .addContainerGap())
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(layout.createSequentialGroup()
@@ -160,14 +180,19 @@ public class Main extends javax.swing.JFrame {
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(250, Short.MAX_VALUE)
-                .addComponent(scrollPanelFileLines, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addContainerGap(215, Short.MAX_VALUE)
+                .addComponent(scrollPanelFileLines, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButton1)
+                    .addComponent(jButton2)
+                    .addComponent(spinnerLineNumber, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(13, 13, 13))
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(layout.createSequentialGroup()
                     .addContainerGap()
-                    .addComponent(scrollPanelTableInformations, javax.swing.GroupLayout.DEFAULT_SIZE, 225, Short.MAX_VALUE)
-                    .addGap(171, 171, 171)))
+                    .addComponent(scrollPanelTableInformations, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE)
+                    .addGap(196, 196, 196)))
         );
 
         pack();
@@ -190,8 +215,11 @@ public class Main extends javax.swing.JFrame {
                 this.fileExtension = fileName.substring(fileName.lastIndexOf("."), fileName.length());
 
                 //determina o modelo da tabela
-                tableFileLines.setModel(TableFiller.fill(fp.process(), new String[]{"File line"}));
+                tableFileLines.setModel(TableFiller.fill(fp.process(), new String[]{"Line","Line Values"}));
                 tableFileLines.repaint();
+
+                this.spinnerLineNumber.setModel(new SpinnerNumberModel(0, 0, this.tableFileLines.getModel().getRowCount(), 1));
+                System.out.println(this.tableFileLines.getModel().getRowCount());
 
             } catch (FileNotFoundException ex) {
                 ex.printStackTrace();
@@ -205,14 +233,17 @@ public class Main extends javax.swing.JFrame {
         // TODO add your handling code here:
 
         System.out.println(tableFileLines.getSelectedRow());
-        String lineValue = (String) tableFileLines.getModel().getValueAt(tableFileLines.getSelectedRow(), 0);
+        String lineValue = (String) tableFileLines.getModel().getValueAt(tableFileLines.getSelectedRow(), 1);
         DefaultTableModel model;
+
+        //atualiza o spinner com o número da linha
+        this.spinnerLineNumber.setValue(tableFileLines.getSelectedRow() + 1);
 
         try {
 
             //busca a posição do nome do módulo
             int[] modNamePosition = getModNamePosition(fileExtension);
-            
+
             System.out.println(modNamePosition[0] + " " + modNamePosition[1]);
 
             model = TableFiller.fillWithModule(lineValue, reader, modNamePosition[0], modNamePosition[1]);
@@ -236,23 +267,23 @@ public class Main extends javax.swing.JFrame {
         int beginEnd[] = new int[2];
 
         System.out.println(fileExtension);
-        
+
         if (this.fileExtension != null) {
             switch (fileExtension.toLowerCase()) {
                 // arquivo geral
                 case ".fop":
-                    beginEnd[0] = 0;
-                    beginEnd[1] = 10;
+                    beginEnd[0] = ModuleNamePosition.FOP_BEGIN.value;
+                    beginEnd[1] = ModuleNamePosition.FOP_END.value;
                     break;
                 // arquivo remessa
                 case ".rem":
-                    beginEnd[0] = 41;
-                    beginEnd[1] = 43;
+                    beginEnd[0] = ModuleNamePosition.REM_BEGIN.value;
+                    beginEnd[1] = ModuleNamePosition.REM_END.value;
                     break;
 
                 default:
-                    beginEnd[0] = 0;
-                    beginEnd[1] = 10;
+                    beginEnd[0] = ModuleNamePosition.FOP_BEGIN.value;
+                    beginEnd[1] = ModuleNamePosition.FOP_END.value;
                     break;
             }
         }
@@ -312,6 +343,8 @@ public class Main extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem editItemSettings;
+    private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
     private javax.swing.JMenuBar menuBar;
     private javax.swing.JMenu menuEdit;
     private javax.swing.JMenu menuFile;
@@ -321,6 +354,7 @@ public class Main extends javax.swing.JFrame {
     private javax.swing.JMenuItem menuItemOpen;
     private javax.swing.JScrollPane scrollPanelFileLines;
     private javax.swing.JScrollPane scrollPanelTableInformations;
+    private javax.swing.JSpinner spinnerLineNumber;
     private javax.swing.JTable tableFileLines;
     private javax.swing.JTable tableInformations;
     // End of variables declaration//GEN-END:variables

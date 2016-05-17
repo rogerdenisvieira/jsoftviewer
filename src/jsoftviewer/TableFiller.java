@@ -21,34 +21,33 @@ public class TableFiller {
 
     public static DefaultTableModel fill(List<String> values, String[] columNames) {
         DefaultTableModel model = new DefaultTableModel(columNames, 0);
-
+        int l = 0;
         for (String s : values) {
-            model.addRow(new Object[]{s});
+            l++;
+            model.addRow(new Object[]{l,s});
         }
 
         return model;
     }
 
-    public static DefaultTableModel fillWithModule(String lineValue, LayoutReader reader) throws ParseException {
+    public static DefaultTableModel fillWithModule(String lineValue, LayoutReader reader, int beginModName, int endModName) throws ParseException {
 
         DefaultTableModel model = new DefaultTableModel(new Object[]{"Attribute Name", "Attribute Value"}, 0);
         String attributeValue = null;
 
-        String moduleName = lineValue.substring(0, 10);
+        String moduleName = lineValue.substring(beginModName, endModName);
         System.out.println(moduleName);
         Layout foundLayout = reader.findLayout(moduleName);
 
         if (foundLayout != null) {
             for (Attribute a : foundLayout.getAttributes()) {
-
                 attributeValue = lineValue.substring(a.getBegin() - 1, a.getEnd());
-                
+
                 if (a.getDescription().contains("Data")) {
                     SimpleDateFormat dateForm = new SimpleDateFormat("yyyyMMdd");
                     Date date = dateForm.parse(attributeValue);
                     dateForm.applyPattern("dd/MM/yyyy");
                     attributeValue = dateForm.format(date);
-
                 }
 
                 System.out.println("Atributo: " + a.getDescription());
@@ -59,10 +58,6 @@ public class TableFiller {
         }
 
         return null;
-
-        //pesquisar o nome do modulo no layoutset
-        //iterar no layout
-        //popular um dictionary com as substring da lineValue sobre cada item do layout
     }
 
 }

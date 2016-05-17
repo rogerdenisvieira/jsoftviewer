@@ -281,4 +281,18 @@
 		<attribute description="Final de linha " length="1" begin="550" end="550"/>
 	</layout>
 
+	<layout module="14">
+		<attribute description="Tipo de Registro" length="2" begin="1" end="2"/>
+		<attribute description="Data de Movimento" length="8" begin="3" end="10"/>
+		<attribute description="Código do Cliente" length="11" begin="11" end="21"/>
+		<attribute description="Filler I" length="20" begin="22" end="41"/>
+		<attribute description="Tipo de Interface" length="2" begin="42" end="43"/>
+		<attribute description="Prefixo do Contrato" length="20" begin="44" end="63"/>
+		<attribute description="Código do Acionamento" length="4" begin="64" end="67"/>
+		<attribute description="Descrição" length="600" begin="68" end="667"/>
+		<attribute description="Data do Acionamento" length="8" begin="668" end="675"/>
+		<attribute description="ID do Acionamento" length="10" begin="676" end="685"/>
+		<attribute description="Filler" length="15" begin="686" end="700"/>
+	</layout>
+
 </layouts>

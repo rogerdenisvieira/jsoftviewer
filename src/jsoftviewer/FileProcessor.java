@@ -33,17 +33,18 @@ public class FileProcessor {
         try {
 
             while ((thisLine = reader.readLine()) != null) {
-                if (thisLine.charAt(thisLine.length() - 1) == '#') {
+                
+//                if (thisLine.charAt(thisLine.length() - 1) == '#') {
                     this.fileLines.add(thisLine);
-                } else {
-                    thisLine += reader.readLine();
-                }
+//                } else {
+//                    thisLine += reader.readLine();
+//                }
             }
 
-            if (fileLines.size() >= 2) {
-                fileLines.remove(0);
-                fileLines.remove(fileLines.size() - 1);
-            }
+//            if (fileLines.size() >= 2) {
+//                fileLines.remove(0);
+//                fileLines.remove(fileLines.size() - 1);
+//            }
 
         } catch (Exception e) {
             e.printStackTrace();
